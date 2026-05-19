@@ -1,0 +1,28 @@
+manifest_version: 1
+name: tubealfred-youtube
+version: "0.1.2"
+description: Read-only TubeAlfred YouTube API tools for Hermes agents.
+author: TubeAlfred
+requires_env:
+  - name: TUBEALFRED_API_KEY
+    description: TubeAlfred API key used for read-only YouTube API requests.
+    url: https://tubealfred.com/app/api-keys
+    secret: true
+provides_tools:
+  - tubealfred_youtube_video_get
+  - tubealfred_youtube_video_transcript
+  - tubealfred_youtube_comments_list
+  - tubealfred_youtube_comments_page
+  - tubealfred_youtube_replies_list
+  - tubealfred_youtube_replies_page
+  - tubealfred_youtube_channel_get
+  - tubealfred_youtube_channel_about
+  - tubealfred_youtube_channel_videos
+  - tubealfred_youtube_channel_shorts
+  - tubealfred_youtube_channel_playlists
+  - tubealfred_youtube_channel_community
+  - tubealfred_youtube_search_query
+  - tubealfred_youtube_search_hashtag
+  - tubealfred_youtube_search_suggest
+  - tubealfred_youtube_playlist_get
+  - tubealfred_youtube_url_resolve

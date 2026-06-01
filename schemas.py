@@ -33,6 +33,14 @@ def _string_schema(description: str, *, min_length: int = 1) -> dict[str, Any]:
     return {"type": "string", "minLength": min_length, "description": description}
 
 
+def _enum_schema(description: str, values: list[str]) -> dict[str, Any]:
+    return {"type": "string", "enum": values, "description": description}
+
+
+def _boolean_schema(description: str) -> dict[str, Any]:
+    return {"type": "boolean", "description": description}
+
+
 def _count_schema() -> dict[str, Any]:
     return {
         "type": "integer",
@@ -74,6 +82,24 @@ def _optional_string(params: dict[str, Any], name: str) -> str | None:
     return value.strip()
 
 
+def _optional_enum(params: dict[str, Any], name: str, allowed: list[str]) -> str | None:
+    value = params.get(name)
+    if value is None:
+        return None
+    if not isinstance(value, str) or value not in allowed:
+        raise ValueError(f"{name} must be one of: {', '.join(allowed)}.")
+    return value
+
+
+def _optional_boolean(params: dict[str, Any], name: str) -> bool | None:
+    value = params.get(name)
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise ValueError(f"{name} must be a boolean.")
+    return value
+
+
 def _optional_count(params: dict[str, Any]) -> int | None:
     value = params.get("count")
     if value is None:
@@ -98,6 +124,11 @@ CHANNEL_ID = _string_schema("YouTube UC channel ID, @handle, or username.")
 COMMENT_ID = _string_schema("Top-level YouTube comment ID returned by the comments endpoint.")
 PLAYLIST_ID = _string_schema("YouTube playlist ID.")
 CONTINUATION = _continuation_schema("Pagination continuation token from a previous TubeAlfred response.")
+
+SEARCH_UPLOAD_DATE = ["all", "today", "week", "month", "year"]
+SEARCH_DURATION = ["all", "under_three_mins", "three_to_twenty_mins", "over_twenty_mins"]
+SEARCH_SORT = ["relevance", "popularity"]
+SEARCH_TYPE = ["all", "video", "shorts", "channel", "playlist", "movie"]
 
 
 TOOLS: list[ToolDefinition] = [
@@ -235,13 +266,39 @@ TOOLS: list[ToolDefinition] = [
         name="tubealfred_youtube_search_query",
         description="Search YouTube through TubeAlfred.",
         parameters=_object_schema(
-            {"query": _string_schema("YouTube search query."), "continuation_token": CONTINUATION},
+            {
+                "query": _string_schema("YouTube search query."),
+                "upload_date": _enum_schema(
+                    "Filter by upload date. One of: all, today, week, month, year.", SEARCH_UPLOAD_DATE
+                ),
+                "duration": _enum_schema(
+                    "Filter by video duration. One of: all, under_three_mins, three_to_twenty_mins, over_twenty_mins.",
+                    SEARCH_DURATION,
+                ),
+                "sort": _enum_schema("Search ranking preference. One of: relevance, popularity.", SEARCH_SORT),
+                "type": _enum_schema(
+                    "Restrict result type. One of: all, video, shorts, channel, playlist, movie.", SEARCH_TYPE
+                ),
+                "features": _string_schema(
+                    "Comma-separated feature filters: hd, subtitles, creative_commons, 3d, live, purchased, 4k, 360, location, hdr, vr180."
+                ),
+                "live": _boolean_schema("Shortcut for features=live."),
+                "shorts": _boolean_schema("Shortcut for type=shorts."),
+                "continuation_token": CONTINUATION,
+            },
             ["query"],
         ),
         request=lambda params: RequestSpec(
             path="/v1/youtube/search/",
             query=_compact({
                 "query": _required_string(params, "query"),
+                "upload_date": _optional_enum(params, "upload_date", SEARCH_UPLOAD_DATE),
+                "duration": _optional_enum(params, "duration", SEARCH_DURATION),
+                "sort": _optional_enum(params, "sort", SEARCH_SORT),
+                "type": _optional_enum(params, "type", SEARCH_TYPE),
+                "features": _optional_string(params, "features"),
+                "live": _optional_boolean(params, "live"),
+                "shorts": _optional_boolean(params, "shorts"),
                 "continuation_token": _optional_string(params, "continuation_token"),
             }),
         ),

@@ -97,6 +97,30 @@ class MetadataTests(unittest.TestCase):
         self.assertEqual(comments.body["continuation_token"], "token")
         self.assertEqual(comments.body["count"], 50)
 
+        search = by_name["tubealfred_youtube_search_query"].request({
+            "query": "laravel tutorial",
+            "upload_date": "month",
+            "duration": "three_to_twenty_mins",
+            "sort": "popularity",
+            "type": "video",
+            "features": "hd,subtitles",
+            "live": True,
+        })
+        self.assertEqual(search.path, "/v1/youtube/search/")
+        self.assertEqual(search.query["upload_date"], "month")
+        self.assertEqual(search.query["duration"], "three_to_twenty_mins")
+        self.assertEqual(search.query["sort"], "popularity")
+        self.assertEqual(search.query["type"], "video")
+        self.assertEqual(search.query["features"], "hd,subtitles")
+        self.assertEqual(search.query["live"], True)
+        self.assertNotIn("shorts", search.query)
+
+        with self.assertRaises(ValueError):
+            by_name["tubealfred_youtube_search_query"].request({
+                "query": "laravel",
+                "upload_date": "decade",
+            })
+
 
 if __name__ == "__main__":
     unittest.main()

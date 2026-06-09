@@ -8,7 +8,7 @@ from urllib.parse import quote
 
 PLUGIN_NAME = "tubealfred-youtube"
 TOOLSET = "tubealfred_youtube"
-VERSION = "0.1.2"
+VERSION = "0.1.4"
 API_KEY_ENV = "TUBEALFRED_API_KEY"
 MAX_COUNT = 100
 

@@ -7,23 +7,42 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_TOOLS = [
+    "tubealfred_billing_usage",
     "tubealfred_youtube_video_get",
+    "tubealfred_youtube_video_enhanced",
+    "tubealfred_youtube_video_transcript_full",
     "tubealfred_youtube_video_transcript",
     "tubealfred_youtube_comments_list",
     "tubealfred_youtube_comments_page",
     "tubealfred_youtube_replies_list",
     "tubealfred_youtube_replies_page",
+    "tubealfred_youtube_related_videos",
+    "tubealfred_youtube_related_videos_page",
     "tubealfred_youtube_channel_get",
     "tubealfred_youtube_channel_about",
     "tubealfred_youtube_channel_videos",
+    "tubealfred_youtube_channel_videos_page",
+    "tubealfred_youtube_channel_streams",
+    "tubealfred_youtube_channel_streams_page",
     "tubealfred_youtube_channel_shorts",
+    "tubealfred_youtube_channel_shorts_page",
     "tubealfred_youtube_channel_playlists",
+    "tubealfred_youtube_channel_playlists_page",
     "tubealfred_youtube_channel_community",
+    "tubealfred_youtube_channel_community_page",
     "tubealfred_youtube_search_query",
+    "tubealfred_youtube_search_page",
     "tubealfred_youtube_search_hashtag",
+    "tubealfred_youtube_search_hashtag_page",
     "tubealfred_youtube_search_suggest",
+    "tubealfred_youtube_trending",
+    "tubealfred_youtube_trending_shorts",
+    "tubealfred_youtube_playlist_metadata",
     "tubealfred_youtube_playlist_get",
+    "tubealfred_youtube_playlist_page",
     "tubealfred_youtube_url_resolve",
+    "tubealfred_youtube_videos_batch",
+    "tubealfred_youtube_channels_batch",
 ]
 
 
@@ -83,9 +102,22 @@ class MetadataTests(unittest.TestCase):
         plugin = load_plugin()
         by_name = {tool.name: tool for tool in plugin.TOOLS}
 
+        billing = by_name["tubealfred_billing_usage"].request({})
+        self.assertEqual(billing.path, "/v1/billing/usage")
+        self.assertEqual(billing.method, "GET")
+
         video = by_name["tubealfred_youtube_video_get"].request({"video_id": "abc123"})
         self.assertEqual(video.path, "/v1/youtube/video/abc123")
         self.assertEqual(video.method, "GET")
+
+        transcript = by_name["tubealfred_youtube_video_transcript"].request({
+            "video_id": "abc123",
+            "language": "en",
+            "kind": "manual",
+        })
+        self.assertEqual(transcript.path, "/v1/youtube/video/abc123/transcript/fast")
+        self.assertEqual(transcript.query["language"], "en")
+        self.assertEqual(transcript.query["kind"], "manual")
 
         comments = by_name["tubealfred_youtube_comments_page"].request({
             "video_id": "abc123",
@@ -115,10 +147,36 @@ class MetadataTests(unittest.TestCase):
         self.assertEqual(search.query["live"], True)
         self.assertNotIn("shorts", search.query)
 
+        search_page = by_name["tubealfred_youtube_search_page"].request({
+            "query": "laravel tutorial",
+            "continuation_token": "token",
+            "channel_id": "@tubealfred",
+        })
+        self.assertEqual(search_page.method, "POST")
+        self.assertEqual(search_page.path, "/v1/youtube/search/page")
+        self.assertEqual(search_page.body["query"], "laravel tutorial")
+        self.assertEqual(search_page.body["continuation_token"], "token")
+        self.assertEqual(search_page.body["channel_id"], "@tubealfred")
+
+        batch = by_name["tubealfred_youtube_videos_batch"].request({
+            "ids": ["dQw4w9WgXcQ"],
+            "fields": "id,title",
+        })
+        self.assertEqual(batch.method, "POST")
+        self.assertEqual(batch.path, "/v1/youtube/videos:batch")
+        self.assertEqual(batch.query["fields"], "id,title")
+        self.assertEqual(batch.body["ids"], ["dQw4w9WgXcQ"])
+
         with self.assertRaises(ValueError):
             by_name["tubealfred_youtube_search_query"].request({
                 "query": "laravel",
                 "upload_date": "decade",
+            })
+
+        with self.assertRaises(ValueError):
+            by_name["tubealfred_youtube_comments_list"].request({
+                "video_id": "abc123",
+                "count": 101,
             })
 
 

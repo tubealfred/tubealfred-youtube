@@ -1,8 +1,8 @@
 # TubeAlfred YouTube
 
-Use TubeAlfred YouTube data inside Hermes Agent.
+Use TubeAlfred YouTube data and billing usage inside Hermes Agent.
 
-This plugin gives Hermes read-only tools for YouTube videos, transcripts, comments, replies, channels, Shorts, playlists, community posts, search results, hashtags, autocomplete suggestions, and URL resolution.
+This plugin gives Hermes read-only tools for YouTube videos, transcripts, comments, replies, channels, Shorts, playlists, community posts, search results, hashtags, autocomplete suggestions, URL resolution, and account billing usage.
 
 ## What You Can Ask Hermes
 
@@ -35,7 +35,7 @@ Get YouTube autocomplete suggestions for "YOUR TOPIC".
 
 - Hermes Agent installed locally.
 - A TubeAlfred account.
-- A TubeAlfred API key with the `youtube.read` scope.
+- A TubeAlfred API key with `youtube.read` for YouTube tools and `billing.read` for billing usage.
 - A configured Hermes model provider, so Hermes can run the agent.
 
 If `hermes -z "hello"` fails with an inference provider error, run:
@@ -55,7 +55,7 @@ https://tubealfred.com/app/api-keys
 Then:
 
 1. Choose **Create key**.
-2. Select the `youtube.read` scope.
+2. Select the scopes you need.
 3. Copy the key immediately.
 
 TubeAlfred only shows the full key once.
@@ -125,6 +125,7 @@ Hermes can use these tools automatically when the `tubealfred_youtube` toolset i
 
 | Tool | What it does |
 | --- | --- |
+| `tubealfred_billing_usage` | Fetch credit balance and billing usage. |
 | `tubealfred_youtube_video_get` | Fetch video metadata. |
 | `tubealfred_youtube_video_transcript` | Fetch a video transcript. |
 | `tubealfred_youtube_comments_list` | Fetch the first comments page for a video. |
@@ -146,7 +147,7 @@ Hermes can use these tools automatically when the `tubealfred_youtube` toolset i
 ## Notes on API Keys
 
 - The plugin needs `TUBEALFRED_API_KEY`.
-- Use a key with the `youtube.read` scope.
+- Use `youtube.read` for YouTube tools and `billing.read` for billing usage.
 - Do not commit your key to a repository.
 - Rotate the key if you paste it into a shared chat, issue, or log.
 

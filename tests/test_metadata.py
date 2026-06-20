@@ -130,7 +130,7 @@ class MetadataTests(unittest.TestCase):
         self.assertEqual(comments.body["count"], 50)
 
         search = by_name["tubealfred_youtube_search_query"].request({
-            "query": "laravel tutorial",
+            "query": "how to learn faster",
             "upload_date": "month",
             "duration": "three_to_twenty_mins",
             "sort": "popularity",
@@ -148,13 +148,13 @@ class MetadataTests(unittest.TestCase):
         self.assertNotIn("shorts", search.query)
 
         search_page = by_name["tubealfred_youtube_search_page"].request({
-            "query": "laravel tutorial",
+            "query": "how to learn faster",
             "continuation_token": "token",
             "channel_id": "@tubealfred",
         })
         self.assertEqual(search_page.method, "POST")
         self.assertEqual(search_page.path, "/v1/youtube/search/page")
-        self.assertEqual(search_page.body["query"], "laravel tutorial")
+        self.assertEqual(search_page.body["query"], "how to learn faster")
         self.assertEqual(search_page.body["continuation_token"], "token")
         self.assertEqual(search_page.body["channel_id"], "@tubealfred")
 
@@ -169,7 +169,7 @@ class MetadataTests(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             by_name["tubealfred_youtube_search_query"].request({
-                "query": "laravel",
+                "query": "how to",
                 "upload_date": "decade",
             })
 

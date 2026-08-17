@@ -1,6 +1,6 @@
 manifest_version: 1
 name: tubealfred-youtube
-version: "0.1.4"
+version: "0.1.5"
 description: Read-only TubeAlfred YouTube API tools plus billing usage lookup for Hermes agents.
 author: TubeAlfred
 requires_env:

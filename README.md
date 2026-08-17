@@ -197,7 +197,10 @@ Repository layout:
 ```text
 plugin.yaml      # Hermes manifest and API key prompt metadata
 __init__.py      # register() wires schemas to handlers
-schemas.py       # tool schemas and TubeAlfred endpoint mapping
+schemas.py       # generic generated-schema and request adapter
+generated_operations.py # generated tool catalog (do not edit)
+contracts/       # vendored versioned TubeAlfred operation manifest
+scripts/         # contract synchronization and drift checking
 tools.py         # tool handlers and TubeAlfred HTTP client
 tests/           # metadata and request mapping tests
 ```
@@ -205,5 +208,8 @@ tests/           # metadata and request mapping tests
 Run tests:
 
 ```bash
+python3 scripts/sync_contract.py --check --source contracts/tubealfred-youtube-operations.v1.json
 python3 -m unittest discover -s tests
 ```
+
+Tool names, schemas, paths, and `plugin.yaml` declarations are generated from the versioned platform contract. Run `python3 scripts/sync_contract.py` to refresh them from the published manifest.

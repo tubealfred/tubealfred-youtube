@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import types
 import sys
 import unittest
@@ -6,44 +7,14 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_TOOLS = [
-    "tubealfred_billing_usage",
-    "tubealfred_youtube_video_get",
-    "tubealfred_youtube_video_enhanced",
-    "tubealfred_youtube_video_transcript_full",
-    "tubealfred_youtube_video_transcript",
-    "tubealfred_youtube_comments_list",
-    "tubealfred_youtube_comments_page",
-    "tubealfred_youtube_replies_list",
-    "tubealfred_youtube_replies_page",
-    "tubealfred_youtube_related_videos",
-    "tubealfred_youtube_related_videos_page",
-    "tubealfred_youtube_channel_get",
-    "tubealfred_youtube_channel_about",
-    "tubealfred_youtube_channel_videos",
-    "tubealfred_youtube_channel_videos_page",
-    "tubealfred_youtube_channel_streams",
-    "tubealfred_youtube_channel_streams_page",
-    "tubealfred_youtube_channel_shorts",
-    "tubealfred_youtube_channel_shorts_page",
-    "tubealfred_youtube_channel_playlists",
-    "tubealfred_youtube_channel_playlists_page",
-    "tubealfred_youtube_channel_community",
-    "tubealfred_youtube_channel_community_page",
-    "tubealfred_youtube_search_query",
-    "tubealfred_youtube_search_page",
-    "tubealfred_youtube_search_hashtag",
-    "tubealfred_youtube_search_hashtag_page",
-    "tubealfred_youtube_search_suggest",
-    "tubealfred_youtube_trending",
-    "tubealfred_youtube_trending_shorts",
-    "tubealfred_youtube_playlist_metadata",
-    "tubealfred_youtube_playlist_get",
-    "tubealfred_youtube_playlist_page",
-    "tubealfred_youtube_url_resolve",
-    "tubealfred_youtube_videos_batch",
-    "tubealfred_youtube_channels_batch",
-]
+def expected_tools() -> list[str]:
+    contract = json.loads(
+        (ROOT / "contracts" / "tubealfred-youtube-operations.v1.json").read_text()
+    )
+    return [
+        "tubealfred_billing_usage",
+        *[operation["clients"]["agent_tool"]["name"] for operation in contract["operations"]],
+    ]
 
 
 def load_plugin():
@@ -94,9 +65,11 @@ class MetadataTests(unittest.TestCase):
         plugin = load_plugin()
         runtime_tools = [tool.name for tool in plugin.TOOLS]
 
-        self.assertEqual(manifest_tools(), EXPECTED_TOOLS)
-        self.assertEqual(runtime_tools, EXPECTED_TOOLS)
-        self.assertEqual(len(set(runtime_tools)), len(EXPECTED_TOOLS))
+        expected = expected_tools()
+
+        self.assertEqual(manifest_tools(), expected)
+        self.assertEqual(runtime_tools, expected)
+        self.assertEqual(len(set(runtime_tools)), len(expected))
 
     def test_request_timeout_leaves_response_margin_above_api_timeout(self):
         load_plugin()

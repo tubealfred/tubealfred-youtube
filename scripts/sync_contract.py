@@ -81,7 +81,7 @@ def main() -> int:
     args = parser.parse_args()
 
     manifest = load_manifest(args.source)
-    if manifest.get("schema_version") != 1 or manifest.get("manifest_version") != "1.0.0":
+    if manifest.get("schema_version") != 1 or manifest.get("manifest_version") != "1.1.0":
         raise ValueError("unsupported TubeAlfred operation manifest version")
     if manifest.get("operation_count") != len(manifest.get("operations", [])):
         raise ValueError("invalid TubeAlfred operation manifest")

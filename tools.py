@@ -14,7 +14,7 @@ from .schemas import API_KEY_ENV, RequestSpec, ToolDefinition, VERSION
 
 PRODUCT_NAME = "TubeAlfred Hermes plugin"
 API_BASE_URL = "https://api.tubealfred.com"
-TIMEOUT_SECONDS = 30
+TIMEOUT_SECONDS = 35
 RETRIES = 1
 
 

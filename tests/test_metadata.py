@@ -98,6 +98,12 @@ class MetadataTests(unittest.TestCase):
         self.assertEqual(runtime_tools, EXPECTED_TOOLS)
         self.assertEqual(len(set(runtime_tools)), len(EXPECTED_TOOLS))
 
+    def test_request_timeout_leaves_response_margin_above_api_timeout(self):
+        load_plugin()
+        tools = sys.modules["hermes_plugins.tubealfred_youtube.tools"]
+
+        self.assertEqual(tools.TIMEOUT_SECONDS, 35)
+
     def test_request_specs_match_tubealfred_paths(self):
         plugin = load_plugin()
         by_name = {tool.name: tool for tool in plugin.TOOLS}

@@ -4,6 +4,10 @@ Use TubeAlfred YouTube data and billing usage inside Hermes Agent.
 
 This plugin gives Hermes read-only tools for YouTube videos, transcripts, comments, replies, channels, Shorts, playlists, community posts, search results, hashtags, autocomplete suggestions, URL resolution, and account billing usage.
 
+## Credits
+
+Free accounts start with 50 credits. The free allowance resets to 50 each month on your signup anniversary; unused free credits do not roll over. Resets affect only the free allowance. No credit card required. See the [current pricing and credits](https://tubealfred.com/pricing.md) for plan and usage details.
+
 ## What You Can Ask Hermes
 
 After installing the plugin, you can ask Hermes things like:
